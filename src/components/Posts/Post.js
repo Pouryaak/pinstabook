@@ -1,19 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Card, Icon, Image, Input } from "semantic-ui-react";
 import { selectUserName, selectUserImage } from "../../feature/userSlicer";
 import { addLikeData } from "../../feature/postsSlicer";
 import moment from "moment";
+import useUserData from "../../helpers/useUserData";
 
 export default function Post(props) {
   const dispatch = useDispatch();
-  const userName = useSelector(selectUserName);
-  const userImage = useSelector(selectUserImage);
+  const userNames = useSelector(selectUserName);
+  const userImages = useSelector(selectUserImage);
+
+  const { isloading, user } = useUserData(props.post.userId);
 
   const addLikeHandler = () => {
     dispatch(addLikeData(props.post.postId));
     console.log(props.post.postId);
   };
+
+  // useEffect(() => {
+  //   console.log(user);
+  // }, [user]);
 
   return (
     <Card fluid>
@@ -21,8 +28,8 @@ export default function Post(props) {
         <Button floated="right" basic icon>
           <Icon name="ellipsis horizontal" />
         </Button>
-        <Image src={userImage} avatar />
-        <span>{userName}</span>
+        <Image src={user?.userImage} avatar />
+        <span>{user?.userName}</span>
       </Card.Content>
       <Image
         src={

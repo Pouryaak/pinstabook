@@ -42,13 +42,6 @@ export default function Navbar() {
         </Button.Content>
       </Button>
       &nbsp;&nbsp;
-      <Button animated="vertical" color="blue">
-        <Button.Content hidden>Profile</Button.Content>
-        <Button.Content visible>
-          <Icon name="user" />
-        </Button.Content>
-      </Button>
-      &nbsp;&nbsp;
       <Button animated="vertical" color="red" onClick={logoutHandler}>
         <Button.Content hidden>Logout</Button.Content>
         <Button.Content visible>

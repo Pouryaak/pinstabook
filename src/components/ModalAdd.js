@@ -30,7 +30,6 @@ export default function ModalAdd(props) {
     setFileUpload(event.target.files[0]);
   };
   const onAddPost = () => {
-    console.log(fileUpload);
     dispatch(
       addPostData({
         userId,
