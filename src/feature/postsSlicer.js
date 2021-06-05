@@ -16,6 +16,7 @@ const postsSlicer = createSlice({
         content: action.payload.content,
         date: action.payload.date,
         image: action.payload.image,
+        comments: action.payload.comments,
         likes: 0,
       });
     },
@@ -30,18 +31,22 @@ const postsSlicer = createSlice({
         return post;
       });
     },
+    addComment: (state, action) => {
+      state.posts = state.posts.map((post) => {
+        if (post.postId === action.payload.id) {
+          post.comments.push({
+            uid: action.payload.uid,
+            commentCont: action.payload.commentCont,
+          });
+        }
+        return post;
+      });
+    },
   },
 });
 
 export const getPostsData = () => {
   return async (dispatch) => {
-    // const postsRef = database.ref("posts");
-    // let posts = [];
-    // postsRef.on("value", (snapshot) => {
-    //   snapshot.forEach((childSnapshot) => {
-    //     posts.push(childSnapshot.val());
-    //   });
-    // });
     let posts = [];
     const resp = await fetch(
       "https://pinstabook-99575-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json"
@@ -54,6 +59,7 @@ export const getPostsData = () => {
         content: data[key].content,
         date: data[key].date,
         image: data[key].image,
+        comments: data[key].comments,
         likes: data[key].likes,
       });
     }
@@ -69,9 +75,10 @@ export const addPostData = ({ userId, content, date, image }) => {
       content,
       date,
       image,
+      comments: [{ uid: "asdas", comment: "test comment" }],
       likes: 0,
     });
-    dispatch(addPost({ userId, content, date, image }));
+    dispatch(addPost({ userId, content, date, image, comments: [] }));
   };
 };
 export const addLikeData = (postId) => {
@@ -84,7 +91,26 @@ export const addLikeData = (postId) => {
     postsRef.child(String(postId)).set(post);
   };
 };
+export const addCommentData = (uid, comment, postId) => {
+  return (dispatch, getState) => {
+    dispatch(
+      addComment({
+        id: postId,
+        uid,
+        commentCont: comment,
+      })
+    );
+    const currentPost = getState().posts.posts.find(
+      (post) => post.postId === postId
+    );
+    const dbRef = database.ref("posts");
+    const postRef = dbRef.child(String(postId));
+    postRef.update({
+      comments: currentPost.comments,
+    });
+  };
+};
 
-export const { addPost, setPosts, addLike } = postsSlicer.actions;
+export const { addPost, setPosts, addLike, addComment } = postsSlicer.actions;
 export const selectPosts = (state) => state.posts.posts;
 export default postsSlicer.reducer;

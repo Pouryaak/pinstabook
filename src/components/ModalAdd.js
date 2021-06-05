@@ -15,7 +15,6 @@ const videoConstraints = {
 
 export default function ModalAdd(props) {
   const [content, setContent] = useState("");
-  const [fileUpload, setFileUpload] = useState("");
   const dispatch = useDispatch();
   const userId = useSelector(selectUserId);
   const [imageTaken, setImageTaken] = useState(null);
@@ -26,9 +25,6 @@ export default function ModalAdd(props) {
     setImageTaken(imageSrc);
   }, [webcamRef]);
 
-  const fileUploadHandler = (event) => {
-    setFileUpload(event.target.files[0]);
-  };
   const onAddPost = () => {
     dispatch(
       addPostData({

@@ -1,8 +1,20 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Card, Icon, Image, Input } from "semantic-ui-react";
-import { selectUserName, selectUserImage } from "../../feature/userSlicer";
-import { addLikeData } from "../../feature/postsSlicer";
+import {
+  Button,
+  Card,
+  Dropdown,
+  Icon,
+  Image,
+  Input,
+  List,
+} from "semantic-ui-react";
+import {
+  selectUserName,
+  selectUserImage,
+  selectUserId,
+} from "../../feature/userSlicer";
+import { addCommentData, addLikeData } from "../../feature/postsSlicer";
 import moment from "moment";
 import useUserData from "../../helpers/useUserData";
 
@@ -10,21 +22,38 @@ export default function Post(props) {
   const dispatch = useDispatch();
   const userNames = useSelector(selectUserName);
   const userImages = useSelector(selectUserImage);
+  const userId = useSelector(selectUserId);
+  const [commentCont, setCommentCont] = useState("");
 
   const { isloading, user } = useUserData(props.post.userId);
+  const { isloaded, userComment } = useUserData(userId);
 
   const addLikeHandler = () => {
     dispatch(addLikeData(props.post.postId));
-    console.log(props.post.postId);
+  };
+  const addCommentHandler = () => {
+    dispatch(addCommentData(userId, commentCont, props.post.postId));
+    setCommentCont("");
   };
 
-  // useEffect(() => {
-  //   console.log(user);
-  // }, [user]);
-
+  const commentSec = props.post.comments?.map((com) => {
+    return (
+      <List.Item key={Date.now() + Math.random()}>
+        {userComment?.userName} {com.commentCont}
+      </List.Item>
+    );
+  });
+  console.log(userId);
   return (
     <Card fluid>
       <Card.Content>
+        {/* <Dropdown
+          text="Dropdown"
+          options={options}
+          simple
+          item
+          floated="right"
+        /> */}
         <Button floated="right" basic icon>
           <Icon name="ellipsis horizontal" />
         </Button>
@@ -45,19 +74,35 @@ export default function Post(props) {
             <i className="heart outline like icon" onClick={addLikeHandler}></i>
             {props.post.likes} likes
           </span>
-          <i className="comment icon"></i>3 comments
+          <i className="comment icon"></i>
+          {props.post.comments.length - 1} comments
         </div>
       </Card.Content>
       <Card.Content>
         <Card.Meta>
           <span className="date">{moment(props.post.date).fromNow()}</span>
         </Card.Meta>
-        <Card.Description>{props.post.content}</Card.Description>
+        <Card.Description>
+          <h4 className="ui header">{props.post.content}</h4>
+        </Card.Description>
       </Card.Content>
-      <Card.Content extra>
+      <Card.Content>
         <Icon name="comment outline" />
         Comments
-        <Input fluid action="Post" transparent placeholder="Add Comment..." />
+        <List divided>{commentSec}</List>
+      </Card.Content>
+      <Card.Content extra>
+        <Input
+          fluid
+          action={{
+            content: "Post",
+            onClick: (event, data) => addCommentHandler(),
+          }}
+          transparent
+          placeholder="Add Comment..."
+          onChange={(e) => setCommentCont(e.target.value)}
+          value={commentCont}
+        />
       </Card.Content>
     </Card>
   );
