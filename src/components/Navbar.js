@@ -52,7 +52,7 @@ export default function Navbar() {
   );
 
   return (
-    <Menu borderless>
+    <Menu borderless stackable>
       <Menu.Item>
         <Image src={logo} size="small" />
       </Menu.Item>

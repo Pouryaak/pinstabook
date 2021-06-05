@@ -94,15 +94,15 @@ export default function Post(props) {
       <Card.Content extra>
         <Input
           fluid
-          action={{
-            content: "Post",
-            onClick: (event, data) => addCommentHandler(),
-          }}
           transparent
           placeholder="Add Comment..."
           onChange={(e) => setCommentCont(e.target.value)}
           value={commentCont}
-        />
+        >
+          <input />
+
+          <Button content="Post" onClick={addCommentHandler} />
+        </Input>
       </Card.Content>
     </Card>
   );
